@@ -14,7 +14,7 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = (
         (None, {'fields': ('national_code', 'full_name', 'phone', 'email', 'password')}),
-        ('permission', {'fields': ('is_admin', 'is_active', 'last_login')}),
+        ('permission', {'fields': ('is_admin', 'is_active', 'directorship', 'is_inspector', 'last_login')}),
     )
     add_fieldsets = ('national_code', 'full_name', 'phone')
     ordering = ('join_date', )

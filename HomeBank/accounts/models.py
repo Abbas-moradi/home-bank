@@ -5,7 +5,7 @@ import uuid
 
 
 class User(AbstractBaseUser):
-    id = models.UUIDField(uuid.uuid4, editable=False, unique=True, primary_key=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True, null=False)
     national_code = models.CharField(max_length=10, unique=True)
     full_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=13, unique=True)
@@ -33,7 +33,7 @@ class User(AbstractBaseUser):
     def has_perm(self, perm, obj=None):
         return True
     
-    def has_madule_perms(self, app_lable):
+    def has_module_perms(self, app_lable):
         return True
     
     @property
