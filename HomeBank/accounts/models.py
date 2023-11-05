@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
+from accounts.managers import UserManager
 import uuid
 
 
@@ -24,7 +25,7 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = 'national_code'
     REQUIRED_FIELDS = ['full_name', 'phone', 'email']
 
-    objects = ''
+    objects = UserManager()
 
     def __str__(self) -> str:
         return self.national_code
