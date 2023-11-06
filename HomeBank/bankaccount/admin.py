@@ -13,3 +13,11 @@ class AccountTransactionAdmin(admin.ModelAdmin):
     list_display = ['transaction', 'account',
                     'account_amount', 'account_balance',
                     'date', 'status', 'on_delete']
+    
+
+@admin.register(Transaction)
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ['user', 'registration_date', 'amount',
+                    'description', 'receipt', 'status',
+                    'record', 'record_date', 'on_delete']
+
