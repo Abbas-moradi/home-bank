@@ -23,5 +23,23 @@ class Account(models.Model):
         return self.id
     
 
-    
+class Transaction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    registration_date = models.DateField(auto_now_add=True)
+    amount = models.PositiveIntegerField()
+    description = models.TextField()
+    receipt = models.IntegerField()
+    status = models.BooleanField(default=True)
+    record = models.BooleanField(default=False)
+    record_date = models.DateField(null=True)
+
+    def set_record_date(self):
+        from datetime import date
+        if self.record:
+            self.record_date = date.today()
+        else:
+            self.record_date = None
+
+    def __str__(self) -> str:
+        return self.id
 
