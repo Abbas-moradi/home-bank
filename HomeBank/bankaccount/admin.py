@@ -8,3 +8,8 @@ class AccountAdmin(admin.ModelAdmin):
                     'opening_date', 'loan_status', 'status',
                     'closed', 'closed_date']
 
+@admin.register(AccountTransaction)
+class AccountTransactionAdmin(admin.ModelAdmin):
+    list_display = ['transaction', 'account',
+                    'account_amount', 'account_balance',
+                    'date', 'status', 'on_delete']
