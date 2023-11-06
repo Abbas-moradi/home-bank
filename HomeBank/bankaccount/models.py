@@ -64,6 +64,11 @@ class AccountTransaction(models.Model):
     status = models.BooleanField(default=True)
     on_delete = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name = 'AccountTransaction'
+        verbose_name_plural = 'AccountTransactions'
+        ordering = ('date', )
+
     def __str__(self)-> str:
         return self.id
 
