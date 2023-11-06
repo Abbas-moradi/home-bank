@@ -1,5 +1,5 @@
 from django.db import models
-from bankaccount.models import Account
+from bankaccount.models import Account, Transaction
 
 
 class Loan(models.Model):
@@ -20,5 +20,22 @@ class Loan(models.Model):
         verbose_name_plural = 'Loans'
         ordering = ('start_date', )
     
+    def __str__(self) -> str:
+        return self.id
+    
+
+class LoanTransaction(models.Model):
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+    loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
+    amount_installment = models.IntegerField()
+    date = models.DateField(auto_now_add=True)
+    status = models.BooleanField(default=True)
+    loan_balance = models.IntegerField()
+
+    class Meta:
+        verbose_name = 'LoanTransaction'
+        verbose_name_plural = 'LoanTransactions'
+        ordering = ('date', )
+
     def __str__(self) -> str:
         return self.id
