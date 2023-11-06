@@ -18,5 +18,10 @@ class Account(models.Model):
             self.closed_date = date.today()
         else:
             self.closed_date = None
+
+    def __str__(self) -> str:
+        return self.id
+    
+
     
 
