@@ -12,6 +12,11 @@ class Account(models.Model):
     closed = models.BooleanField(default=False)
     closed_date = models.DateField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = 'Account'
+        verbose_name_plural = 'Accounts'
+        ordering = ('account_number', )
+
     def set_closed_date(self):
         from datetime import date
         if self.closed:
