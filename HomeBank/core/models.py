@@ -4,7 +4,7 @@ from django.db import models
 class BranchSetting(models.Model):
     tution = models.IntegerField(default=0)
     Installment_number = models.PositiveSmallIntegerField(default=1)
-    percent = models.DecimalField(default=1.0)
+    percent = models.DecimalField(max_digits=5, decimal_places=2, default=0.5)
     bank_email = models.EmailField(max_length=250)
     bank_card_number = models.CharField(max_length=16)
     description = models.TextField()
@@ -14,9 +14,9 @@ class BranchSetting(models.Model):
         return self.id
     
     class Meta:
-        vebose_name = 'setting'
+        verbose_name = 'setting'
         verbose_name_plural = 'Setting'
-        ordering = 'id'
+        ordering = ('id', )
 
 
 class Branch(models.Model):
@@ -30,5 +30,5 @@ class Branch(models.Model):
     
     class Meta:
         verbose_name = 'branch'
-        verbose_plural_name = 'branch'
-        ordering = 'id'
+        verbose_name_plural = 'branch'
+        ordering = ('id', )
