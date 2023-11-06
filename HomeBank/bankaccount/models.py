@@ -39,6 +39,11 @@ class Transaction(models.Model):
     record_date = models.DateField(null=True)
     on_delete = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name = 'Transaction'
+        verbose_name_plural = 'Transactions'
+        ordering = ('registration_date', )
+
     def set_record_date(self):
         from datetime import date
         if self.record:
