@@ -32,6 +32,7 @@ class Transaction(models.Model):
     status = models.BooleanField(default=True)
     record = models.BooleanField(default=False)
     record_date = models.DateField(null=True)
+    on_delete = models.BooleanField(default=False)
 
     def set_record_date(self):
         from datetime import date
@@ -42,4 +43,18 @@ class Transaction(models.Model):
 
     def __str__(self) -> str:
         return self.id
+
+
+class AccountTransaction(models.Model):
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account_amount = models.IntegerField()
+    account_balance = models.IntegerField()
+    date = models.DateField(auto_now_add=True)
+    status = models.BooleanField(default=True)
+    on_delete = models.BooleanField(default=False)
+
+    def __str__(self)-> str:
+        return self.id
+
 
