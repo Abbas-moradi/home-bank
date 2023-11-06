@@ -2,7 +2,7 @@ from django.db import models
 
 
 class BranchSetting(models.Model):
-    salary = models.IntegerField(default=0)
+    tution = models.IntegerField(default=0)
     Installment_number = models.PositiveSmallIntegerField(default=1)
     percent = models.DecimalField(default=1.0)
     bank_email = models.EmailField(max_length=250)
