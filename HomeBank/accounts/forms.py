@@ -34,4 +34,5 @@ class UserChangeForm(forms.ModelForm):
               'phone',
               'email',
               'password',
+              'sex',
               'last_login')
