@@ -6,7 +6,9 @@ from rest_framework import status
 from accounts.models import User
     
 
-class UserRegisterApiView(APIView):
+class UserApiView(APIView):
+    """ In this class you can view and create and 
+    update or delete user by primary key"""
 
     def get(self, request):
         users = User.objects.all()
