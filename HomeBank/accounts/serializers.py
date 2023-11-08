@@ -40,3 +40,13 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         del validated_data['password2']
         print(validated_data)
         return User.objects.create(**validated_data)
+    
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = '__all__'
+        extra_kwargs = {
+            'password':{'write_only':True},
+            }
