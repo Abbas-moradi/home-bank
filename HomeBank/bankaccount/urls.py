@@ -5,5 +5,5 @@ from bankaccount.views import *
 app_name = 'bankaccounts'
 
 urlpatterns = [
-    path('allaccounts/', BankAcoounts.as_view(),name='bankaccounts'),
+    path('allaccounts/', BankAcoountsApiView.as_view(),name='bankaccounts'),
 ]
