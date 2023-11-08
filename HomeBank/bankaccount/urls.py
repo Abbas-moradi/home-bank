@@ -5,5 +5,5 @@ from bankaccount.views import *
 app_name = 'bankaccounts'
 
 urlpatterns = [
-    path('', BankAcoounts.as_view(),name='bankaccounts'),
+    path('allaccounts/', BankAcoounts.as_view(),name='bankaccounts'),
 ]
