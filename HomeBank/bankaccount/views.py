@@ -18,3 +18,15 @@ class BankAcoountCreateApiView(APIView):
 
     def post(self, request):
         pass
+
+
+class BankAcoountUpdateApiView(APIView):
+
+    def put(self, request, pk):
+        pass
+
+
+class BankAcoountDeleteApiView(APIView):
+
+    def delete(self, request, pk):
+        pass
