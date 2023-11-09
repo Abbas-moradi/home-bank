@@ -38,15 +38,7 @@ class Account(models.Model):
 
     def __str__(self) -> str:
         return str(self.id)
-    
-    # def save(self, *args, **kwargs):
-    #     last_account = Account.objects.all().aggregate(largest=models.Max('account_number'))['largest']
-    #     if last_account:
-    #         self.account_number = last_account + 1
-    #     else:
-    #         self.account_number = 1
-    #     super().save(*args, **kwargs)
-    
+        
 
 
 class Transaction(models.Model):
