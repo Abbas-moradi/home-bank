@@ -17,7 +17,11 @@ class BankAcoountsApiView(APIView):
 class BankAcoountCreateApiView(APIView):
 
     def post(self, request):
-        pass
+        ser_data = BankAccountSerializers(instance=request.POST)
+        if ser_data.is_valid():
+            Account.objects.create(**ser_data.data)
+            return Response(ser_data.data, status=status.HTTP_201_CREATED)
+        return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BankAcoountUpdateApiView(APIView):
