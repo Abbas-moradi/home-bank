@@ -10,8 +10,6 @@ class LoansApiView(APIView):
 
     def get(self, request):
         loans = Loan.objects.filter(status=True, termination=False)
-        ser_data = LoanSerializers(instance=loans, many=True)
-        if ser_data.is_valid():
-            return Response(ser_data.data, status=status.HTTP_200_OK)
-        return Response(ser_data.errors, status=status.HTTP_404_NOT_FOUND)
+        ser_data = LoanSerializers(instance=loans, many=True)    
+        return Response(ser_data.data, status=status.HTTP_200_OK)
 
