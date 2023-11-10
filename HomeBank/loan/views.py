@@ -1,3 +1,17 @@
 from django.shortcuts import render
+from rest_framework.views import APIView
+from loan.models import Loan
+from loan.serializers import LoanSerializers
+from rest_framework.response import Response
+from rest_framework import status
 
-# Create your views here.
+
+class LoansApiView(APIView):
+
+    def get(self, request):
+        loans = Loan.objects.filter(status=True, termination=False)
+        ser_data = LoanSerializers(instance=loans, many=True)
+        if ser_data.is_valid():
+            return Response(ser_data.data, status=status.HTTP_200_OK)
+        return Response(ser_data.errors, status=status.HTTP_404_NOT_FOUND)
+

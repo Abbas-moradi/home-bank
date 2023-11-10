@@ -13,7 +13,7 @@ class Loan(models.Model):
     delay_days = models.PositiveSmallIntegerField(default=0)
     installment_paid = models.IntegerField()
     status = models.BooleanField(default=True)
-    clearing = models.BooleanField(default=False)
+    termination = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Loan'
