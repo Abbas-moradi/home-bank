@@ -13,10 +13,17 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ('is_admin', )
 
     fieldsets = (
-        (None, {'fields': ('national_code', 'full_name', 'phone', 'email', 'password')}),
+        (None, {'fields': ('national_code', 'full_name', 'phone', 'email', 'photo', 'sex', 'password')}),
         ('permission', {'fields': ('is_admin', 'is_active', 'directorship', 'is_inspector', 'last_login')}),
     )
-    add_fieldsets = ('national_code', 'full_name', 'phone')
+    
+    add_fieldsets = (
+    (None, {
+        'classes': ('wide',),
+        'fields': ('national_code', 'full_name', 'phone', 'email', 'photo', 'sex', 'password'),
+    }),
+    )
+
     ordering = ('join_date', )
     filter_horizontal = ()
 

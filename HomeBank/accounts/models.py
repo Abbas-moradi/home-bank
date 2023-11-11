@@ -14,7 +14,7 @@ class User(AbstractBaseUser):
         ('M', 'men'),
         ('W', 'women')
     ])
-    photo = models.ImageField(upload_to='media/%Y/%m/%d/')
+    photo = models.ImageField(upload_to='media/%Y/%m/%d/', null=True)
     join_date = models.DateField(auto_now_add=True)
     
     is_admin = models.BooleanField(default=False)
@@ -28,7 +28,7 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     def __str__(self) -> str:
-        return self.national_code
+        return f'{self.full_name} - {self.national_code}'
     
     def has_perm(self, perm, obj=None):
         return True

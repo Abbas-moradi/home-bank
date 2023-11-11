@@ -1,10 +1,22 @@
 from django.db import models
 from accounts.models import User
+import uuid
 
 
 class Account(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    account_number = models.PositiveIntegerField()
+    account_number = models.PositiveSmallIntegerField(unique=True, null=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.account_number:
+            last_account = Account.objects.aggregate(largest=models.Max('account_number'))['largest']
+            if last_account is not None:
+                self.account_number = last_account + 1
+            else:
+                self.account_number = 1
+        super().save(*args, **kwargs)
+
     balance = models.IntegerField()
     opening_date = models.DateField(auto_now_add=True)
     loan_status = models.BooleanField(default=False)
@@ -25,8 +37,9 @@ class Account(models.Model):
             self.closed_date = None
 
     def __str__(self) -> str:
-        return self.id
-    
+        return str(self.id)
+        
+
 
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -70,6 +83,6 @@ class AccountTransaction(models.Model):
         ordering = ('date', )
 
     def __str__(self)-> str:
-        return self.id
+        return str(self.id)
 
 
