@@ -83,6 +83,6 @@ class AccountTransaction(models.Model):
         ordering = ('date', )
 
     def __str__(self)-> str:
-        return self.id
+        return str(self.id)
 
 

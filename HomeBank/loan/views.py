@@ -12,4 +12,5 @@ class LoansApiView(APIView):
         loans = Loan.objects.filter(status=True, termination=False)
         ser_data = LoanSerializers(instance=loans, many=True)    
         return Response(ser_data.data, status=status.HTTP_200_OK)
+       
 

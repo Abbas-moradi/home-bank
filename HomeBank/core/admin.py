@@ -9,6 +9,6 @@ class BranchAdmin(admin.ModelAdmin):
 
 @admin.register(BranchSetting)
 class BranchSettingAdmin(admin.ModelAdmin):
-    list_display = ['tution', 'Installment_number', 
-                    'percent', 'bank_email', 'bank_card_number',
+    list_display = ['tution', 'loan_amount', 'installment_number', 
+                    'wage', 'bank_email', 'bank_card_number',
                     'description', 'sms_fee']
