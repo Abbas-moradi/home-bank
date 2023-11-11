@@ -6,7 +6,7 @@ from core.models import BranchSetting
 
 
 class Loan(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='loan')
     start_date = models.DateField(auto_now_add=True)
     loan_amount = models.IntegerField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)

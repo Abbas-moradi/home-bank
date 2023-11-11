@@ -5,7 +5,7 @@ import uuid
 
 class Account(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accounts')
     account_number = models.PositiveSmallIntegerField(unique=True, null=True, editable=False)
 
     def save(self, *args, **kwargs):
