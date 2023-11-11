@@ -32,3 +32,16 @@ class LoanCreateApiView(APIView):
                         status=status.HTTP_201_CREATED)
 
 
+class LoanUpdateApiView(APIView):
+
+    def put(self, request, pk):
+        try:
+            loan = get_object_or_404(Loan, pk=pk, termination=False)
+            if loan != None:
+                loan.installment_paid += 1
+                loan.save()
+                loan_result_show = Loan.objects.get(pk=pk)
+                ser_data = LoanSerializers(instance=loan_result_show)
+                return Response(ser_data.data, status=status.HTTP_202_ACCEPTED)
+        except:
+            return Response({'result':'loan not found'}, status=status.HTTP_404_NOT_FOUND)

@@ -36,6 +36,9 @@ class Loan(models.Model):
         self.installment_amount = self.loan_amount / self.term
         self.wage_amount = setting.wage
         self.loan_remaining = (self.installment_amount*self.installment_paid) - self.loan_amount
+        if self.installment_paid == self.term:
+            self.termination = True
+            self.status = False
         return super().save()
     
 
