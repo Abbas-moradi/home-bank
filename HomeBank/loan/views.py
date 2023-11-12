@@ -28,7 +28,9 @@ class LoanCreateApiView(APIView):
         loan_instance.initial_setting()
         account.loan_status = False
         account.save()
-        return Response({'status':'loan paid'}, 
+        get_loan = Loan.objects.get(pk=loan_instance.id)
+        loan_paid = LoanSerializers(instance=get_loan)
+        return Response(loan_paid.data, 
                         status=status.HTTP_201_CREATED)
 
 
