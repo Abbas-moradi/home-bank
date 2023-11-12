@@ -6,13 +6,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from bankaccount.models import Account
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import login, logout
 
 
 class LoansApiView(APIView):
 
     def get(self, request):
-        loans = Loan.objects.filter(status=True, termination=False)
+        loans = Loan.objects.all()
         ser_data = LoanSerializers(instance=loans, many=True)
         return Response(ser_data.data, status=status.HTTP_200_OK)
     
