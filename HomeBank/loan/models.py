@@ -31,21 +31,26 @@ class Loan(models.Model):
     def save(self) -> None:
         
         if self.installment_paid == self.term:
+            self.loan_remaining = (self.installment_amount*self.installment_paid) - self.loan_amount    
             self.termination = True
             self.status = False
             self.account.loan_status = True
             self.account.save()
+        else:
+            self.loan_remaining = (self.installment_amount*self.installment_paid) - self.loan_amount    
         return super().save()
     
-    def initial(self):
+    def initial_setting(self):
         setting = BranchSetting.objects.get(pk=1)
         self.term = setting.installment_number
+        self.installment_number = setting.installment_number
         self.loan_amount = setting.loan_amount
         self.end_date = datetime.now() + timedelta(days=30 * self.term)
         self.installment_amount = self.loan_amount / self.term
         self.wage_amount = setting.wage
-        self.loan_remaining = (self.installment_amount*self.installment_paid) - self.loan_amount
+        self.loan_remaining = 0 - self.loan_amount
         self.account.loan_status = False
+        self.account.save()
     
         return super().save()
     

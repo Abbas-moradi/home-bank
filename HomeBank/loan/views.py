@@ -25,7 +25,7 @@ class LoanCreateApiView(APIView):
             return Response({'result': 'account have loan'})
     
         loan_instance = Loan(account=account)
-        loan_instance.initial()
+        loan_instance.initial_setting()
         account.loan_status = False
         account.save()
         return Response({'status':'loan paid'}, 
@@ -44,4 +44,4 @@ class LoanUpdateApiView(APIView):
                 ser_data = LoanSerializers(instance=loan_result_show)
                 return Response(ser_data.data, status=status.HTTP_202_ACCEPTED)
         except:
-            return Response({'result':'loan not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'result':'loan not found or settled'}, status=status.HTTP_404_NOT_FOUND)
