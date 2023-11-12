@@ -13,7 +13,7 @@ class LoansApiView(APIView):
 
     def get(self, request):
         loans = Loan.objects.filter(status=True, termination=False)
-        ser_data = LoanSerializers(instance=loans, many=True)    
+        ser_data = LoanSerializers(instance=loans, many=True)
         return Response(ser_data.data, status=status.HTTP_200_OK)
     
 class LoanCreateApiView(APIView):
@@ -25,7 +25,7 @@ class LoanCreateApiView(APIView):
             return Response({'result': 'account have loan'})
     
         loan_instance = Loan(account=account)
-        loan_instance.save()
+        loan_instance.initial()
         account.loan_status = False
         account.save()
         return Response({'status':'loan paid'}, 
