@@ -5,6 +5,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from bankaccount.models import Account, AccountTransaction, Transaction
 from bankaccount.serializers import BankAccountSerializers, BankAccountUpdateSerializers
+from core.models import BranchSetting
 
 
 class BankAccountsApiView(APIView):
@@ -28,13 +29,16 @@ class BankAccountCreateApiView(APIView):
 class BankAccountUpdateApiView(APIView):
 
     def put(self, request, pk):
+        branch_setting = BranchSetting.objects.get(pk=1) 
         try:
             bankAccount = Account.objects.get(pk=pk, closed=False)
             ser_data = BankAccountUpdateSerializers(instance=bankAccount, data=request.data, partial=True)
             if ser_data.is_valid():
-                bankAccount.balance += int(request.POST['balance'])
+                bankAccount.balance += branch_setting.tution
                 bankAccount.save()
-                return Response(ser_data.data, status=status.HTTP_200_OK)
+                account = Account.objects.get(pk=bankAccount.id)
+                serializ = BankAccountSerializers(instance=account)
+                return Response(serializ.data, status=status.HTTP_200_OK)
             return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response({'account not found or closed': pk}, status=status.HTTP_404_NOT_FOUND)

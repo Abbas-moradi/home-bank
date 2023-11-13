@@ -19,7 +19,7 @@ class Account(models.Model):
 
     balance = models.IntegerField()
     opening_date = models.DateField(auto_now_add=True)
-    loan_status = models.BooleanField(default=False)
+    loan_status = models.BooleanField(default=True)
     status = models.BooleanField(default=True)
     closed = models.BooleanField(default=False)
     closed_date = models.DateField(null=True, blank=True)
@@ -65,7 +65,7 @@ class Transaction(models.Model):
             self.record_date = None
 
     def __str__(self) -> str:
-        return self.id
+        return str(self.id)
 
 
 class AccountTransaction(models.Model):
