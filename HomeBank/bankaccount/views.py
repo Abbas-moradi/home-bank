@@ -90,9 +90,10 @@ class TransactionCreateApiView(APIView):
         user_id = [id for id in user_accounts]
         user_loans = []
         for _ in user_id:
-            user_loans.append(Loan.objects.filter(account=_, termination=False, status=True).values_list('installment_amount', flat=True))
-
-        installment_amounts = sum([item[0] for item in user_loans])
-        if int(installment_amounts + sum_user_account_tution) == int(amount):
+            user_loans.append(Loan.objects.filter(account=_, termination=False, status=True).values_list('installment_amount', flat=False))
+       
+        installment_amounts = [item[0] for item in user_loans if item]
+        total_amount = sum(item[0] for item in installment_amounts)
+        if int(total_amount + sum_user_account_tution) == int(amount):
             return Response(ser_data.data)
         return Response({'amount errore': 'The deposit amount is not equal to the amount that the user has to deposit'})
