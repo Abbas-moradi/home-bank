@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from bankaccount.models import Account
+from bankaccount.models import Account, Transaction
 from loan.serializers import LoanSerializers
 
 
@@ -19,3 +19,10 @@ class BankAccountUpdateSerializers(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = ('balance', )
+
+
+class TransactionSerializers(serializers.ModelSerializer):
+
+    class Meta:
+        model = Transaction
+        fields = '__all__'

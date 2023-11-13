@@ -5,6 +5,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from bankaccount.models import Account, AccountTransaction, Transaction
 from bankaccount.serializers import BankAccountSerializers, BankAccountUpdateSerializers
+from bankaccount.serializers import TransactionSerializers
 from core.models import BranchSetting
 
 
@@ -51,12 +52,24 @@ class BankAccountDeleteApiView(APIView):
             bankAccount = get_object_or_404(Account, pk=pk, closed=False)
             ser_data = BankAccountSerializers(instance=bankAccount)
             if bankAccount.balance != 0:
-                return Response({'account balance not equal 0':ser_data.data}, status=status.HTTP_406_NOT_ACCEPTABLE)
+                return Response({'account balance not equal 0':ser_data.data}, 
+                                status=status.HTTP_406_NOT_ACCEPTABLE)
             elif bankAccount.loan_status==True:
-                return Response({'account have loan': ser_data.data}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+                return Response({'account have loan': ser_data.data}, 
+                                status=status.HTTP_405_METHOD_NOT_ALLOWED)
             else:
                 bankAccount.closed = True
                 bankAccount.save()
-                return Response({'account closed': ser_data.data}, status=status.HTTP_202_ACCEPTED)
+                return Response({'account closed': ser_data.data}, 
+                                status=status.HTTP_202_ACCEPTED)
         except:
-            return Response({'account not found or closed': pk}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'account not found or closed': pk}, 
+                            status=status.HTTP_404_NOT_FOUND)
+        
+
+class TransactionApiView(APIView):
+
+    def get(self, request):
+        tr = Transaction.objects.all()
+        ser_data = TransactionSerializers(instance=tr, many=True)
+        return Response(ser_data.data, status=status.HTTP_200_OK)

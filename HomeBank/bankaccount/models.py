@@ -44,12 +44,12 @@ class Account(models.Model):
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     registration_date = models.DateField(auto_now_add=True)
-    amount = models.PositiveIntegerField()
-    description = models.TextField()
-    receipt = models.IntegerField()
+    amount = models.PositiveIntegerField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    receipt = models.IntegerField(null=True, blank=True)
     status = models.BooleanField(default=True)
     record = models.BooleanField(default=False)
-    record_date = models.DateField(null=True)
+    record_date = models.DateField(null=True, blank=True)
     on_delete = models.BooleanField(default=False)
 
     class Meta:
