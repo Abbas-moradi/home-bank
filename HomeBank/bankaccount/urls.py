@@ -7,6 +7,7 @@ app_name = 'bankaccounts'
 urlpatterns = [
     path('allaccounts/', BankAccountsApiView.as_view(),name='bankaccounts'),
     path('transactions/', TransactionApiView.as_view(),name='transactions'),
+    path('createtransaction/', TransactionCreateApiView.as_view(),name='createtransaction'),
     path('createaccount/', BankAccountCreateApiView.as_view(),name='createaccount'),
     path('updateaccount/<str:pk>/', BankAccountUpdateApiView.as_view(),name='updateaccount'),
     path('deleteaccount/<str:pk>/', BankAccountDeleteApiView.as_view(),name='deleteaccount'),
