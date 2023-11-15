@@ -46,7 +46,7 @@ class Transaction(models.Model):
     registration_date = models.DateField(auto_now_add=True)
     amount = models.PositiveIntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    receipt = models.IntegerField(null=True, blank=True)
+    receipt_code = models.CharField(max_length=100, null=True, blank=True)
     status = models.BooleanField(default=True)
     record = models.BooleanField(default=False)
     record_date = models.DateField(null=True, blank=True)
@@ -55,7 +55,7 @@ class Transaction(models.Model):
     class Meta:
         verbose_name = 'Transaction'
         verbose_name_plural = 'Transactions'
-        ordering = ('registration_date', )
+        ordering = ('-registration_date', )
 
     def set_record_date(self):
         from datetime import date

@@ -8,6 +8,7 @@ from bankaccount.serializers import BankAccountSerializers, BankAccountUpdateSer
 from bankaccount.serializers import TransactionSerializers
 from core.models import BranchSetting
 from loan.models import Loan
+from accounts.models import User
 
 
 class BankAccountsApiView(APIView):
@@ -80,20 +81,33 @@ class TransactionCreateApiView(APIView):
 
     def post(self, request):
         amount = request.POST['amount']
-        user_id = request.POST['user']
-        user_accounts = []
-        for _ in Account.objects.filter(user=user_id, status=True, closed=False):
-            user_accounts.append(_)
-        ser_data = BankAccountSerializers(instance=user_accounts, many=True)
-        tution = BranchSetting.objects.get(pk=1)
-        sum_user_account_tution = len(user_accounts)*tution.tution
-        user_id = [id for id in user_accounts]
-        user_loans = []
-        for _ in user_id:
-            user_loans.append(Loan.objects.filter(account=_, termination=False, status=True).values_list('installment_amount', flat=False))
-       
-        installment_amounts = [item[0] for item in user_loans if item]
-        total_amount = sum(item[0] for item in installment_amounts)
-        if int(total_amount + sum_user_account_tution) == int(amount):
-            return Response(ser_data.data)
-        return Response({'amount errore': 'The deposit amount is not equal to the amount that the user has to deposit'})
+        user_id_in = request.POST['user']
+        receipt_code = request.POST['receipt_code']
+        try:
+            registered = get_object_or_404(Transaction, receipt_code=receipt_code, status=True)
+            return Response({'result': 'Receipt already registered'})
+        except:
+        
+            user_accounts = []
+            for _ in Account.objects.filter(user=user_id_in, status=True, closed=False):
+                user_accounts.append(_)
+
+            tution = BranchSetting.objects.get(pk=1)
+            sum_user_account_tution = len(user_accounts)*tution.tution
+            user_id = [id for id in user_accounts]
+            user_loans = []
+            loans = []
+            for _ in user_id:
+                user_loans.append(Loan.objects.filter(account=_, termination=False, status=True).values_list('installment_amount', flat=False))
+                loans.append(Loan.objects.filter(account=_, termination=False, status=True))
+            
+            installment_amounts = [item[0] for item in user_loans if item]
+            total_installment_amounts = sum(item[0] for item in installment_amounts)
+            if int(total_installment_amounts + sum_user_account_tution) == int(amount):
+                user = get_object_or_404(User, pk=user_id_in)
+                trans = Transaction.objects.create(user=user, amount=amount, 
+                                        description=f'accounts={user_accounts} - loans={loans}',
+                                        receipt_code=receipt_code)
+                ser_deta = TransactionSerializers(instance=trans)
+                return Response(ser_deta.data, status=status.HTTP_201_CREATED)
+            return Response({'amount errore': 'The deposit amount is not equal to the amount that the user has to deposit'})

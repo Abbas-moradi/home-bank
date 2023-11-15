@@ -18,6 +18,6 @@ class AccountTransactionAdmin(admin.ModelAdmin):
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ['user', 'registration_date', 'amount',
-                    'description', 'receipt', 'status',
+                    'description', 'receipt_code', 'status',
                     'record', 'record_date', 'on_delete']
 
