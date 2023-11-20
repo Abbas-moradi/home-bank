@@ -37,7 +37,8 @@ class Loan(models.Model):
             self.account.loan_status = True
             self.account.save()
         else:
-            self.loan_remaining = (self.installment_amount*self.installment_paid) - self.loan_amount    
+            self.loan_remaining = (self.installment_amount*self.installment_paid) - self.loan_amount
+            self.account.loan_status = False    
         return super().save()
     
     def initial_setting(self):

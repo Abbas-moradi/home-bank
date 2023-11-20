@@ -95,12 +95,13 @@ class TransactionCreateApiView(APIView):
 
             tution = BranchSetting.objects.get(pk=1)
             sum_user_account_tution = len(user_accounts)*tution.tution
-            user_id = [id for id in user_accounts]
+            account_id = [id for id in user_accounts]
             user_loans = []
             loans = []
-            for _ in user_id:
-                user_loans.append(Loan.objects.filter(account=_, termination=False, status=True).values_list('installment_amount', flat=False))
-                loans.append(Loan.objects.get(account=_, termination=False, status=True))
+            for _ in user_accounts:
+                if _.loan_status == False:
+                    loans.append(Loan.objects.get(account=_, termination=False, status=True))
+                    user_loans.append(Loan.objects.filter(account=_, termination=False, status=True).values_list('installment_amount', flat=False))
             
             installment_amounts = [item[0] for item in user_loans if item]
             total_installment_amounts = sum(item[0] for item in installment_amounts)
@@ -109,7 +110,14 @@ class TransactionCreateApiView(APIView):
                 trans = Transaction.objects.create(user=user, amount=amount, 
                                         description=f'accounts={user_accounts} - loans={loans}',
                                         receipt_code=receipt_code)
+                
+                for loan in loans:
+                    loan_data = Loan.objects.get(pk=loan.id)
+                    loan_data.installment_paid += 1
+                    loan_data.save()
+                    
                 ser_deta = TransactionSerializers(instance=trans)
 
                 return Response(ser_deta.data, status=status.HTTP_201_CREATED)
-            return Response({'amount errore': 'The deposit amount is not equal to the amount that the user has to deposit'})
+            else:
+                return Response({'amount errore': 'The deposit amount is not equal to the amount that the user has to deposit'})
