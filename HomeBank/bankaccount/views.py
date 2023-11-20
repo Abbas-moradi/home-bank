@@ -9,6 +9,7 @@ from bankaccount.serializers import TransactionSerializers
 from core.models import BranchSetting
 from loan.models import Loan
 from accounts.models import User
+import uuid
 
 
 class BankAccountsApiView(APIView):
@@ -99,7 +100,7 @@ class TransactionCreateApiView(APIView):
             loans = []
             for _ in user_id:
                 user_loans.append(Loan.objects.filter(account=_, termination=False, status=True).values_list('installment_amount', flat=False))
-                loans.append(Loan.objects.filter(account=_, termination=False, status=True))
+                loans.append(Loan.objects.get(account=_, termination=False, status=True))
             
             installment_amounts = [item[0] for item in user_loans if item]
             total_installment_amounts = sum(item[0] for item in installment_amounts)
@@ -109,5 +110,6 @@ class TransactionCreateApiView(APIView):
                                         description=f'accounts={user_accounts} - loans={loans}',
                                         receipt_code=receipt_code)
                 ser_deta = TransactionSerializers(instance=trans)
+
                 return Response(ser_deta.data, status=status.HTTP_201_CREATED)
             return Response({'amount errore': 'The deposit amount is not equal to the amount that the user has to deposit'})
