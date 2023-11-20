@@ -7,7 +7,7 @@ from bankaccount.models import Account, AccountTransaction, Transaction
 from bankaccount.serializers import BankAccountSerializers, BankAccountUpdateSerializers
 from bankaccount.serializers import TransactionSerializers
 from core.models import BranchSetting
-from loan.models import Loan
+from loan.models import Loan, LoanTransaction
 from accounts.models import User
 import uuid
 
@@ -115,6 +115,23 @@ class TransactionCreateApiView(APIView):
                     loan_data = Loan.objects.get(pk=loan.id)
                     loan_data.installment_paid += 1
                     loan_data.save()
+                    LoanTransaction.objects.create(
+                        transaction=trans,
+                        loan=loan,
+                        amount_installment=loan.installment_amount,
+                        loan_balance=loan.loan_remaining
+                    )
+                
+                for ac in user_accounts:
+                    ac.balance += tution.tution
+                    ac.save()
+                    AccountTransaction.objects.create(
+                        transaction = trans,
+                        account = ac,
+                        account_amount = tution.tution,
+                        account_balance = ac.balance,
+                    )
+
                     
                 ser_deta = TransactionSerializers(instance=trans)
 
