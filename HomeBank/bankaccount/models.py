@@ -5,7 +5,7 @@ import uuid
 
 class Account(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accounts')
     account_number = models.PositiveSmallIntegerField(unique=True, null=True, editable=False)
 
     def save(self, *args, **kwargs):
@@ -19,7 +19,7 @@ class Account(models.Model):
 
     balance = models.IntegerField()
     opening_date = models.DateField(auto_now_add=True)
-    loan_status = models.BooleanField(default=False)
+    loan_status = models.BooleanField(default=True)
     status = models.BooleanField(default=True)
     closed = models.BooleanField(default=False)
     closed_date = models.DateField(null=True, blank=True)
@@ -44,18 +44,18 @@ class Account(models.Model):
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     registration_date = models.DateField(auto_now_add=True)
-    amount = models.PositiveIntegerField()
-    description = models.TextField()
-    receipt = models.IntegerField()
+    amount = models.PositiveIntegerField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    receipt_code = models.CharField(max_length=100, null=True, blank=True)
     status = models.BooleanField(default=True)
     record = models.BooleanField(default=False)
-    record_date = models.DateField(null=True)
+    record_date = models.DateField(null=True, blank=True)
     on_delete = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Transaction'
         verbose_name_plural = 'Transactions'
-        ordering = ('registration_date', )
+        ordering = ('-registration_date', )
 
     def set_record_date(self):
         from datetime import date
@@ -65,11 +65,11 @@ class Transaction(models.Model):
             self.record_date = None
 
     def __str__(self) -> str:
-        return self.id
+        return str(self.id)
 
 
 class AccountTransaction(models.Model):
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='account')
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     account_amount = models.IntegerField()
     account_balance = models.IntegerField()

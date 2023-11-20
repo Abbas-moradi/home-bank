@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from accounts.models import User
+from bankaccount.serializers import BankAccountSerializers
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # accounts = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -10,6 +12,10 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}
         }
+
+    # def get_accounts(self, obj):
+    #     result = obj.accounts.filter(status=True)
+    #     return BankAccountSerializers(instance=result).data
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):

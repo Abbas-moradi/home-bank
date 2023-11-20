@@ -6,7 +6,7 @@ from core.models import BranchSetting
 
 
 class Loan(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='loan')
     start_date = models.DateField(auto_now_add=True)
     loan_amount = models.IntegerField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
@@ -29,18 +29,35 @@ class Loan(models.Model):
         return str(self.id)
     
     def save(self) -> None:
+        
+        if self.installment_paid == self.term:
+            self.loan_remaining = (self.installment_amount*self.installment_paid) - self.loan_amount    
+            self.termination = True
+            self.status = False
+            self.account.loan_status = True
+            self.account.save()
+        else:
+            self.loan_remaining = (self.installment_amount*self.installment_paid) - self.loan_amount
+            self.account.loan_status = False    
+        return super().save()
+    
+    def initial_setting(self):
         setting = BranchSetting.objects.get(pk=1)
         self.term = setting.installment_number
+        self.installment_number = setting.installment_number
         self.loan_amount = setting.loan_amount
         self.end_date = datetime.now() + timedelta(days=30 * self.term)
         self.installment_amount = self.loan_amount / self.term
         self.wage_amount = setting.wage
-        self.loan_remaining = (self.installment_amount*self.installment_paid) - self.loan_amount
+        self.loan_remaining = 0 - self.loan_amount
+        self.account.loan_status = False
+        self.account.save()
+    
         return super().save()
     
 
 class LoanTransaction(models.Model):
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='loan')
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
     amount_installment = models.IntegerField()
     date = models.DateField(auto_now_add=True)
