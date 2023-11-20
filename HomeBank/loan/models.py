@@ -57,7 +57,7 @@ class Loan(models.Model):
     
 
 class LoanTransaction(models.Model):
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='loan')
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
     amount_installment = models.IntegerField()
     date = models.DateField(auto_now_add=True)

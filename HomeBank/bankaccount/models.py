@@ -69,7 +69,7 @@ class Transaction(models.Model):
 
 
 class AccountTransaction(models.Model):
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name='account')
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     account_amount = models.IntegerField()
     account_balance = models.IntegerField()
