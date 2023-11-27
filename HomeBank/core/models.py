@@ -1,4 +1,5 @@
 from django.db import models
+from accounts.models import User
 
 
 class BranchSetting(models.Model):
@@ -33,3 +34,16 @@ class Branch(models.Model):
         verbose_name = 'branch'
         verbose_name_plural = 'branch'
         ordering = ('id', )
+
+
+class Request(models.Model):
+    request = models.CharField(max_length=20, choices=[
+        ('LA', 'Loan application'),
+        ('AO', 'Account opening'),
+        ('R', 'Review'),
+        ('P', 'Proposal')
+    ])
+    description = models.TextField(null=True, blank=True)
+    created = models.DateField(auto_now_add=True)
+    seen = models.BooleanField(default=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
