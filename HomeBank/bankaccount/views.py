@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,7 +8,6 @@ from bankaccount.serializers import TransactionSerializers
 from core.models import BranchSetting
 from loan.models import Loan, LoanTransaction
 from accounts.models import User
-import uuid
 
 
 class BankAccountsApiView(APIView):
@@ -102,7 +100,7 @@ class TransactionCreateApiView(APIView):
                 if _.loan_status == False:
                     loans.append(Loan.objects.get(account=_, termination=False, status=True))
                     user_loans.append(Loan.objects.filter(account=_, termination=False, status=True).values_list('installment_amount', flat=False))
-            
+
             installment_amounts = [item[0] for item in user_loans if item]
             total_installment_amounts = sum(item[0] for item in installment_amounts)
             if int(total_installment_amounts + sum_user_account_tution) == int(amount):

@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from accounts.serializers import UserSerializer, UserRegisterSerializer, UserUpdateSerializer
 from rest_framework.response import Response

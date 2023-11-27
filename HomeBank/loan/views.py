@@ -20,6 +20,7 @@ class LoanCreateApiView(APIView):
     def post(self, request):
         account = get_object_or_404(Account, pk=request.POST['account'],
                                     status=True, closed=False)
+        user_loan = Loan.objects.filter()
         if account.loan_status == False:
             return Response({'result': 'account have loan'})
     
