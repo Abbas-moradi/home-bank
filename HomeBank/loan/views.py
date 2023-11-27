@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from bankaccount.models import Account
 from django.shortcuts import get_object_or_404
+from accounts.models import User
 
 
 class LoansApiView(APIView):
@@ -20,9 +21,21 @@ class LoanCreateApiView(APIView):
     def post(self, request):
         account = get_object_or_404(Account, pk=request.POST['account'],
                                     status=True, closed=False)
-        user_loan = Loan.objects.filter()
+        
         if account.loan_status == False:
             return Response({'result': 'account have loan'})
+
+        user = get_object_or_404(User, pk=request.POST['id'])
+        user_accounts = Account.objects.filter(user=user).values_list('id', flat=True)
+
+        for ua in user_accounts:
+            try:
+                loan = get_object_or_404(Loan, account=ua, termination=False)
+                if loan and loan.termination==False and loan.delay_days > 0:
+                    return Response({'result': 'The user has a delay in payment'}, 
+                                    status=status.HTTP_406_NOT_ACCEPTABLE)
+            except:
+                continue
     
         loan_instance = Loan(account=account)
         loan_instance.initial_setting()
