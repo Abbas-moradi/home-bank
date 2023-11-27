@@ -52,3 +52,6 @@ class Request(models.Model):
         verbose_name = 'request'
         verbose_name_plural = 'requests'
         ordering = ('id', )
+
+    def __str__(self) -> str:
+        return str(self.request)
