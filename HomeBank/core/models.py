@@ -47,3 +47,8 @@ class Request(models.Model):
     created = models.DateField(auto_now_add=True)
     seen = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'request'
+        verbose_name_plural = 'requests'
+        ordering = ('id', )
