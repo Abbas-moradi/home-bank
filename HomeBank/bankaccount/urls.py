@@ -11,4 +11,5 @@ urlpatterns = [
     path('createaccount/', BankAccountCreateApiView.as_view(),name='createaccount'),
     path('updateaccount/<str:pk>/', BankAccountUpdateApiView.as_view(),name='updateaccount'),
     path('deleteaccount/<str:pk>/', BankAccountDeleteApiView.as_view(),name='deleteaccount'),
+    path('totalbalance/', TotalBalanceOfAccountsApiView.as_view(),name='totalbalance'),
 ]

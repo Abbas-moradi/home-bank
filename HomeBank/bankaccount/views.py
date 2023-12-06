@@ -136,3 +136,14 @@ class TransactionCreateApiView(APIView):
                 return Response(ser_deta.data, status=status.HTTP_201_CREATED)
             else:
                 return Response({'amount errore': 'The deposit amount is not equal to the amount that the user has to deposit'})
+
+
+class TotalBalanceOfAccountsApiView(APIView):
+
+    def get(self, request):
+        totalbalance = 0
+        totalaccounts = Account.objects.all()
+        for account in totalaccounts:
+            totalbalance += account.balance
+        context = {'total balance': totalbalance}
+        return Response(context, status=status.HTTP_200_OK)
