@@ -4,10 +4,12 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from bankaccount.models import Account, AccountTransaction, Transaction
 from bankaccount.serializers import BankAccountSerializers, BankAccountUpdateSerializers
-from bankaccount.serializers import TransactionSerializers
+from bankaccount.serializers import TransactionSerializers, AccountTransactionSerializers
 from core.models import BranchSetting
 from loan.models import Loan, LoanTransaction
 from accounts.models import User
+from datetime import datetime
+from django.db.models import Q
 
 
 class BankAccountsApiView(APIView):
@@ -139,7 +141,7 @@ class TransactionCreateApiView(APIView):
 
 
 class TotalBalanceOfAccountsApiView(APIView):
-
+    """ in this API you can see total accounts balance  """
     def get(self, request):
         totalbalance = 0
         totalaccounts = Account.objects.all()
@@ -147,3 +149,30 @@ class TotalBalanceOfAccountsApiView(APIView):
             totalbalance += account.balance
         context = {'total balance': totalbalance}
         return Response(context, status=status.HTTP_200_OK)
+
+
+class AccountBillingApiView(APIView):
+    """ You can see the invoice of a specific account
+        using a certain period of time in this API 
+        The date format should be like this -> '2023-11-13' """
+
+    def post(self, request):
+        account = Account.objects.get(pk=request.POST['account'])
+        start_date = request.POST['start']
+        end_date = request.POST['end']
+        
+        if datetime.strptime(start_date, "%Y-%m-%d") > datetime.strptime(end_date, "%Y-%m-%d"):
+            return Response({'Date Errore': 'The start date cannot be greater than the end date'}
+                            , status=status.HTTP_400_BAD_REQUEST)
+        
+        ac_tr = AccountTransaction.objects.filter(
+            Q(account=account) & Q(date__gte=start_date) & Q(date__lte=end_date))
+
+        if len(ac_tr)>0:
+            ser_data = AccountTransactionSerializers(instance=ac_tr, many=True)
+            return Response(ser_data.data, status=status.HTTP_200_OK)
+        return Response({'result': 'There are no transactions in this time frame'}, status=status.HTTP_404_NOT_FOUND)
+            
+        
+
+        
