@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from bankaccount.models import Account, AccountTransaction, Transaction
 from bankaccount.serializers import BankAccountSerializers, BankAccountUpdateSerializers
 from bankaccount.serializers import TransactionSerializers, AccountTransactionSerializers
+from loan.serializers import LoanTransactionSerializers
 from core.models import BranchSetting
 from loan.models import Loan, LoanTransaction
 from accounts.models import User
@@ -167,10 +168,19 @@ class AccountBillingApiView(APIView):
         
         ac_tr = AccountTransaction.objects.filter(
             Q(account=account) & Q(date__gte=start_date) & Q(date__lte=end_date))
+        
+        try:
+            loan = get_object_or_404(Loan, account=account, termination=False)
+            lo_tr = LoanTransaction.objects.filter(
+                Q(loan=loan) & Q(date__gte=start_date) & Q(date__lte=end_date))
+            loan_result=True
+        except:
+            loan_result = False
 
-        if len(ac_tr)>0:
-            ser_data = AccountTransactionSerializers(instance=ac_tr, many=True)
-            return Response(ser_data.data, status=status.HTTP_200_OK)
+        if len(ac_tr)>0 and loan_result==True:
+            ac_ser_data = AccountTransactionSerializers(instance=ac_tr, many=True)
+            lo_ser_data = LoanTransactionSerializers(instance=lo_tr, many=True)
+            return Response((ac_ser_data.data, lo_ser_data.data), status=status.HTTP_200_OK)
         return Response({'result': 'There are no transactions in this time frame'}, status=status.HTTP_404_NOT_FOUND)
             
         
