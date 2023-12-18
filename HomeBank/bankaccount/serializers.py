@@ -12,7 +12,7 @@ class BankAccountSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_loan(self, obj):
-        result = obj.loan.filter(termination=False, status=True)
+        result = obj.loan.filter(termination=False, status=True)  #Here, loan means the related name inside the loan model
         return LoanSerializers(instance=result, many=True).data
 
 
@@ -31,11 +31,11 @@ class TransactionSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_account_transaction(self, obj):
-        result = obj.account.all()
+        result = obj.account.all()  #Here, account means the related name inside the account transaction model
         return AccountTransactionSerializers(instance=result, many=True).data
 
     def get_loan_transaction(self, obj):
-        result = obj.loan.all()
+        result = obj.loan.all()  #Here, loan means the related name inside the loan transaction model
         return LoanTransactionSerializers(instance=result, many=True).data
 
 

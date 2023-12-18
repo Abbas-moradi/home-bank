@@ -1,15 +1,16 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from bankaccount.models import Account, AccountTransaction, Transaction
 from bankaccount.serializers import BankAccountSerializers, BankAccountUpdateSerializers
-from bankaccount.serializers import TransactionSerializers
+from bankaccount.serializers import TransactionSerializers, AccountTransactionSerializers
+from loan.serializers import LoanTransactionSerializers
 from core.models import BranchSetting
 from loan.models import Loan, LoanTransaction
 from accounts.models import User
-import uuid
+from datetime import datetime
+from django.db.models import Q
 
 
 class BankAccountsApiView(APIView):
@@ -102,7 +103,7 @@ class TransactionCreateApiView(APIView):
                 if _.loan_status == False:
                     loans.append(Loan.objects.get(account=_, termination=False, status=True))
                     user_loans.append(Loan.objects.filter(account=_, termination=False, status=True).values_list('installment_amount', flat=False))
-            
+
             installment_amounts = [item[0] for item in user_loans if item]
             total_installment_amounts = sum(item[0] for item in installment_amounts)
             if int(total_installment_amounts + sum_user_account_tution) == int(amount):
@@ -138,3 +139,50 @@ class TransactionCreateApiView(APIView):
                 return Response(ser_deta.data, status=status.HTTP_201_CREATED)
             else:
                 return Response({'amount errore': 'The deposit amount is not equal to the amount that the user has to deposit'})
+
+
+class TotalBalanceOfAccountsApiView(APIView):
+    """ in this API you can see total accounts balance  """
+    def get(self, request):
+        totalbalance = 0
+        totalaccounts = Account.objects.all()
+        for account in totalaccounts:
+            totalbalance += account.balance
+        context = {'total balance': totalbalance}
+        return Response(context, status=status.HTTP_200_OK)
+
+
+class AccountBillingApiView(APIView):
+    """ You can see the invoice of a specific account
+        using a certain period of time in this API 
+        The date format should be like this -> '2023-11-13' """
+
+    def post(self, request):
+        account = Account.objects.get(pk=request.POST['account'])
+        start_date = request.POST['start']
+        end_date = request.POST['end']
+        
+        if datetime.strptime(start_date, "%Y-%m-%d") > datetime.strptime(end_date, "%Y-%m-%d"):
+            return Response({'Date Errore': 'The start date cannot be greater than the end date'}
+                            , status=status.HTTP_400_BAD_REQUEST)
+        
+        ac_tr = AccountTransaction.objects.filter(
+            Q(account=account) & Q(date__gte=start_date) & Q(date__lte=end_date))
+        
+        try:
+            loan = get_object_or_404(Loan, account=account, termination=False)
+            lo_tr = LoanTransaction.objects.filter(
+                Q(loan=loan) & Q(date__gte=start_date) & Q(date__lte=end_date))
+            loan_result=True
+        except:
+            loan_result = False
+
+        if len(ac_tr)>0 and loan_result==True:
+            ac_ser_data = AccountTransactionSerializers(instance=ac_tr, many=True)
+            lo_ser_data = LoanTransactionSerializers(instance=lo_tr, many=True)
+            return Response((ac_ser_data.data, lo_ser_data.data), status=status.HTTP_200_OK)
+        return Response({'result': 'There are no transactions in this time frame'}, status=status.HTTP_404_NOT_FOUND)
+            
+        
+
+        
